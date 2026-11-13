@@ -1,0 +1,12 @@
+[user]
+	email = {{ .email }}
+	name = {{ .fullName }}
+[core]
+{{- if .isWindows }}
+	sshCommand = 'C:\\Windows\\System32\\OpenSSH\\ssh.exe'
+{{- else if .isWSL }}
+	sshCommand = '/mnt/c/Windows/System32/OpenSSH/ssh.exe'
+{{- end }}
+	autocrlf = input
+[pull]
+	rebase = true

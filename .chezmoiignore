@@ -1,0 +1,5 @@
+README.md
+
+{{ if not .isWindows }}
+.wslconfig
+{{ end }}

@@ -1,0 +1,39 @@
+{{- $isWindows := eq .chezmoi.os "windows" -}}
+{{- $isWSL := contains "microsoft" (dig "kernel" "osrelease" "" .chezmoi) -}}
+{{- $isMacOs := eq .chezmoi.os "darwin" -}}
+{{- $isUbuntu := eq (dig "osRelease" "id" "" .chezmoi) "ubuntu" -}}
+
+{{- $windowsHostUserDir := "" -}}
+{{- $wslMemory := "" -}}
+{{- $keepassDatabase := "" -}}
+
+{{- $email := promptStringOnce . "email" "Email address" -}}
+{{- $fullName := promptStringOnce . "fullName" "Full name" -}}
+{{- $computerType := promptChoiceOnce . "computerType" "Computer type" (list "personal" "work") -}}
+{{- $isPersonal := eq $computerType "personal" -}}
+{{- $isWork := eq $computerType "work" -}}
+
+{{- if $isWindows -}}
+{{- $wslMemory = promptStringOnce . "wslMemory" "WSL memory limit (e.g. 8GB, leave empty for default)" -}}
+{{- else if $isWSL -}}
+{{- $windowsHostUserDir = promptStringOnce . "windowsHostUserDir" "Name of user directory on Windows host" -}}
+{{- end -}}
+{{- $keepassDatabase = promptStringOnce . "keepassDatabase" "KeePassXC database full path" -}}
+
+[data]
+  email = {{ $email | quote }}
+  fullName = {{ $fullName | quote }}
+  isWindows = {{ $isWindows }}
+  isUnix = {{ or $isWSL $isUbuntu $isMacOs }}
+  isWSL = {{ $isWSL }}
+  isMacOs = {{ $isMacOs }}
+  isUbuntu = {{ $isUbuntu }}
+  isPersonal = {{ $isPersonal }}
+  isWork = {{ $isWork }}
+  computerType = {{ $computerType | quote }}
+  windowsHostUserDir = {{ $windowsHostUserDir | quote }}
+  wslMemory = {{ $wslMemory | quote }}
+  keepassDatabase = {{ $keepassDatabase | quote }}
+
+[keepassxc]
+  database = {{ $keepassDatabase | quote }}
